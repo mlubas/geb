@@ -1,16 +1,11 @@
+#!/usr/bin/env python3
 import sys
 import re
 import random
 
+# Rough implementation of The MU-puzzle from GEB
 
-v0 = "mu"
-v1 = "uim"
-v2 = "muumuu"
-v3 = "uiiumiuuimuiiumiuuimuiiu"
-
-# the function check_rx return true is the rule may 
-# be used for a transformation
-
+# Rule 1: If you have a string with last letter i, you may add a u at the end
 def check_r1(s):
     if s[-1] == "i":
         return True
@@ -18,14 +13,13 @@ def check_r1(s):
         return False
 
 def apply_r1(s):
-    # Rule 1: If you have a string with last letter i, you 
-    # can add a u at the end
     if s[-1] == "i":
         return s + "i"
     else:
         print("You didn't check rule 1!")
         sys.exit()
 
+# Rule 2: Given Mx, you may add Mxx to the string
 def check_r2(s):
     try:
         a = s.index('m')        # this gets the first m in string
@@ -37,7 +31,7 @@ def check_r2(s):
         return False
 
 def apply_r2(s):
-    # Assumes the M is at the start of the string, not ideal
+    # Assume the M is at the start of the string
     sub = s[1:]
     ex = s + sub
     return ex
@@ -57,7 +51,6 @@ def get_indices(s, sub):
         print("There was a call to get_indexes but returned ", indices)
         return indices
     
-
 # Rule 3: iii becomes u
 # from umiiimu -> umumu
 # from miiii -> miu OR mui
@@ -76,6 +69,10 @@ def apply_r3(s):
     n = s[:index] + 'u' + s[index+3:]
     return n
 
+# Rule 4: uu can be dropped
+# from uuu -> u
+# from muuuiii -> muiii
+
 def check_r4(s):
     if 'uu' in s and len(s) > 3:
         return True
@@ -83,11 +80,6 @@ def check_r4(s):
         return False
 
 def apply_r4(s):
-    # Rule 4: uu can be dropped
-    # from uuu -> u
-    # from muuuiii -> muiii
-
-    # fails on muu
     sub = 'uu'
     indices = get_indices(s, sub)
     index = random.choice(indices)
